@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Project } from '../types';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
+import { ImageWithLoader } from './ImageWithLoader';
 
 interface ProjectCardProps {
   project: Project;
@@ -21,16 +22,18 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     >
       <Link to={`/project/${project.id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-stone-200 mb-6">
-          <img 
+          <ImageWithLoader 
             src={thumbnail} 
-            alt={project.title} 
+            alt={project.title}
+            wrapperClassName="w-full h-full"
             className="w-full h-full object-cover transition-transform duration-1000 ease-[0.22, 1, 0.36, 1] group-hover:scale-110"
           />
-          {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors duration-500" />
+          
+          {/* Overlay on hover - z-index ensures it sits above the loader */}
+          <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors duration-500 z-20" />
           
           {/* Action Icon */}
-          <div className="absolute bottom-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <div className="absolute bottom-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-30">
              <div className="bg-white/90 backdrop-blur-md p-3 rounded-full text-stone-900">
                 <ArrowUpRight size={20} />
              </div>

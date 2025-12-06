@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { PROJECTS } from '../constants';
@@ -8,17 +8,32 @@ import { ArrowRight, ChevronDown } from 'lucide-react';
 export const Home: React.FC = () => {
   // Using a high-quality Unsplash image for the hero background
   const heroImage = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2053&auto=format&fit=crop";
+  const [heroLoaded, setHeroLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (imgRef.current && imgRef.current.complete) {
+      setHeroLoaded(true);
+    }
+  }, []);
 
   return (
     <div className="w-full bg-stone-50">
       {/* Hero Section */}
-      <section className="h-screen w-full relative flex items-center overflow-hidden">
-        {/* Background Image */}
+      <section className="h-screen w-full relative flex items-center overflow-hidden bg-stone-900">
+        {/* Background Image Container */}
         <div className="absolute inset-0 z-0">
+          {/* Skeleton loader for hero: removed animate-pulse when loaded */}
+          <div 
+             className={`absolute inset-0 bg-stone-800 z-0 transition-opacity duration-1000 ${heroLoaded ? 'opacity-0' : 'opacity-100 animate-pulse'}`}
+          />
+          
           <img 
+            ref={imgRef}
             src={heroImage} 
             alt="Hero Architecture" 
-            className="w-full h-full object-cover brightness-[0.6]"
+            className={`w-full h-full object-cover brightness-[0.6] transition-opacity duration-1000 ease-out ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
+            onLoad={() => setHeroLoaded(true)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-transparent to-stone-900/30" />
         </div>

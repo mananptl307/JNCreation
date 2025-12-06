@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { ImageWithLoader } from '../components/ImageWithLoader';
 
 export const About: React.FC = () => {
   return (
@@ -14,13 +15,13 @@ export const About: React.FC = () => {
             transition={{ duration: 1 }}
             className="relative h-[60vh] md:h-[80vh] overflow-hidden order-2 md:order-1"
           >
-            <div className="absolute inset-0 bg-stone-200" />
-            <img 
+            <ImageWithLoader 
               src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2664&auto=format&fit=crop" 
               alt="Studio Office" 
+              wrapperClassName="w-full h-full"
               className="w-full h-full object-cover transition-all duration-[2s] hover:scale-105"
             />
-            <div className="absolute bottom-8 left-8 bg-white/90 backdrop-blur-sm p-6 max-w-xs shadow-lg">
+            <div className="absolute bottom-8 left-8 bg-white/90 backdrop-blur-sm p-6 max-w-xs shadow-lg z-20">
                <p className="font-oswald uppercase text-xl text-stone-900">Est. 2009</p>
                <p className="text-xs text-stone-500 mt-2">Award winning studio based in New York</p>
             </div>

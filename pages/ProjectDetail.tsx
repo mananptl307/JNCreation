@@ -1,18 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { PROJECTS } from '../constants';
 import { ArrowLeft, MapPin, Calendar, Layers } from 'lucide-react';
+import { ImageWithLoader } from '../components/ImageWithLoader';
 
 export const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [headerLoaded, setHeaderLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
   
   const project = PROJECTS.find(p => p.id === Number(id));
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    // Reset loader when ID changes
+    setHeaderLoaded(false);
   }, [id]);
+
+  useEffect(() => {
+    // Check if image is cached
+    if (imgRef.current && imgRef.current.complete) {
+      setHeaderLoaded(true);
+    }
+  }, [project]);
 
   if (!project) {
     return (
@@ -26,18 +38,23 @@ export const ProjectDetail: React.FC = () => {
   return (
     <div className="bg-stone-50 min-h-screen">
       {/* Header Image */}
-      <div className="h-[70vh] w-full relative">
+      <div className="h-[70vh] w-full relative bg-stone-200">
         <div className="absolute top-24 left-6 md:left-20 z-20">
           <Link to="/projects" className="group inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors uppercase text-[10px] font-bold tracking-[0.2em] backdrop-blur-md px-6 py-3 rounded-full bg-stone-900/30 border border-white/10 hover:bg-stone-900/50">
             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Portfolio
           </Link>
         </div>
         
+        {/* Header Loading Skeleton: removed animate-pulse when loaded */}
+        <div className={`absolute inset-0 bg-stone-800 transition-opacity duration-1000 ${headerLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100 animate-pulse'}`} />
+
         {project.media[0].type === 'image' ? (
           <img 
+            ref={imgRef}
             src={project.media[0].url} 
             alt={project.title} 
-            className="w-full h-full object-cover"
+            className={`w-full h-full object-cover transition-opacity duration-1000 ${headerLoaded ? 'opacity-100' : 'opacity-0'}`}
+            onLoad={() => setHeaderLoaded(true)}
           />
         ) : (
           <video 
@@ -47,6 +64,7 @@ export const ProjectDetail: React.FC = () => {
             muted 
             loop 
             playsInline
+            onLoadedData={() => setHeaderLoaded(true)}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-transparent to-stone-900/30 opacity-80" />
@@ -123,12 +141,12 @@ export const ProjectDetail: React.FC = () => {
                   </div>
                 ) : (
                   <div className="relative group">
-                    <img 
+                    <ImageWithLoader 
                       src={media.url} 
                       alt={media.alt || `Project image ${index + 2}`} 
                       className="w-full h-auto max-h-[85vh] object-cover shadow-xl"
                     />
-                    <div className="absolute bottom-0 right-0 bg-white/90 backdrop-blur p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                    <div className="absolute bottom-0 right-0 bg-white/90 backdrop-blur p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-20">
                       <p className="text-xs font-oswald text-stone-900 uppercase tracking-widest">
                         View {index + 1}
                       </p>
